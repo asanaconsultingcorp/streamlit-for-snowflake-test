@@ -1,6 +1,7 @@
 import pandas as pd
 import urllib.parse
 import streamlit as st
+from io import StringIO
 
 
 def getGraph(df):
@@ -11,11 +12,14 @@ def getGraph(df):
     return f'digraph {{\n{edges}}}'
 
 st.title("Hierarchical Data Viewer")
-uploaded_file = st.file_uploader("Upload a CSV file", type=[]"csv"], accept_multiple_files=False)
 
-pr
+filename = "data/employees.csv"
+uploaded_file = st.sidebar.file_uploader("Upload a CSV file", type=["csv"], accept_multiple_files=False)
 
-df_orig = pd.read_csv("data/employees.csv", header=0).convert_dtypes()
+if uploaded_file is not None:
+    filename = StringIO(uploaded_file.getvalue().decode("utf-8"))
+    
+df_orig = pd.read_csv(filename, header=0).convert_dtypes()
 cols = list(df_orig.columns)
 
 child = st.sidebar.selectbox("Child Column Name", cols, index=0)
