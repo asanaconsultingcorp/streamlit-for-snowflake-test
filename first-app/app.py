@@ -1,4 +1,4 @@
-import json
+import json, uuid
 import streamlit as st
 import streamlit.components.v1 as components
 import pandas as pd
@@ -38,7 +38,7 @@ with st.sidebar:
     parent = st.selectbox("Parent Column Name", cols, index=1)
     df = df_orig[[child, parent]]
     
-    st.sidebar.markdown(f"User: {st.experimental_user.email}")
+    #st.sidebar.markdown(f"User: {st.experimental_user.username}")
 
 tabSource, tabFormat, tabGraph, tabChart, tabAnim = st.tabs(
     ["Source", "Format", "Graph", "Chart", "Animated"])
