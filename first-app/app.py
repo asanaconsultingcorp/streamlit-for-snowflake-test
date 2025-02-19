@@ -20,7 +20,7 @@ def getSessionId():
     
 
 @st.cache_data(show_spinner="Loading the CSV file...")
-def loadFile(filename):
+def loadFile(session_id, filename):
     return pd.read_csv(filename).convert_dtypes()
 
 with st.sidebar:
