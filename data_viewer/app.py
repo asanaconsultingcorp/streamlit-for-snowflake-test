@@ -19,7 +19,7 @@ def getSessionId():
     return st.session_state["session_id"]
     
 
-@st.cache_data(show_spinner="Loading the CSV file...")
+#@st.cache_data(show_spinner="Loading the CSV file...")
 def loadFile(session_id, filename):
     return pd.read_csv(filename).convert_dtypes()
 
