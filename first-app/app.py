@@ -8,10 +8,12 @@ import modules.formats as formats
 import modules.charts as charts
 import modules.animated as animated
 import modules.utils as utils
+import auth
 
 st.set_page_config(layout="wide")
 st.title("Hierarchical Data Viewer")
 st.caption("Display your hierarchical data with charts and graphs.")
+auth.check_user_and_password()
 
 def getSessionId():
     if "session_id" not in st.session_state:
