@@ -1,0 +1,13 @@
+default_connection_name = "myconnection"
+
+[connections]
+[connections.myconnection]
+account = "knondbh-naa00611"
+user = "asanaconsultingcorp"
+password = "Zpzp0809!abcde"
+
+
+[cli.logs]
+save_logs = true
+path = "C:\\Projects\\streamlit-for-snowflake-test\\first-app"
+level = "info"

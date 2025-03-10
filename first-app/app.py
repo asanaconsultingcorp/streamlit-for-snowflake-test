@@ -26,28 +26,62 @@ def loadFile(session_id, filename):
     return pd.read_csv(filename).convert_dtypes()
 
 with st.sidebar:
-    uploaded_file = st.file_uploader(
-        "Upload a CSV file", type=["csv"], accept_multiple_files=False)
-    
-    filename = utils.getFullPath("data/employees.csv")
-    if uploaded_file is not None:
-        filename = StringIO(uploaded_file.getvalue().decode("utf-8"))
-
-    df_orig = loadFile(getSessionId(), filename)
+    print("1")
+    session = (
+        utils.getLocalSession()
+        if utils.isLocal()
+        else utils.getRemoteSession()
+    )
+    print("2")
+    tableName = None
+    if session is not None:
+        tableName = st.text_input("Full table/view name")
+    print("3")
+    hasTable = session is not None and tableName is not None and len(tableName) > 0
+    if hasTable:
+        df_orig = utils.getDataFrame(session, f"select * from {tableName}")
+    else:
+        filename = utils.getFullPath("data/employees.csv")
+        if utils.isLocal():
+            uploaded_file = st.file_uploader(
+                "Upload a CSV file", type=["csv"], accept_multiple_files=False)
+            if uploaded_file is not None:
+                filename = StringIO(uploaded_file.getvalue().decode("utf-8"))
+        df_orig = loadFile(getSessionId(), filename)
+        
     cols = list(df_orig.columns)
 
     child = st.selectbox("Child Column Name", cols, index=0)
     parent = st.selectbox("Parent Column Name", cols, index=1)
-    df = df_orig[[child, parent]]
     
+    df = df_orig[[child, parent]]
     #st.sidebar.markdown(f"User: {st.experimental_user.username}")
+    
+tabSource, tabPath, tabFormat, tabGraph, tabChart, tabAnim = st.tabs(
+    ["Source", "Path", "Format", "Graph", "Chart", "Animated"])
 
-tabSource, tabFormat, tabGraph, tabChart, tabAnim = st.tabs(
-    ["Source", "Format", "Graph", "Chart", "Animated"])
 
 with tabSource:
     st.dataframe(df_orig, use_container_width=True)
 
+with tabPath:
+    print(hasTable)
+    if hasTable:
+        child_index = cols.index(child) + 1
+        parent_index = cols.index(parent) + 1
+    
+        query = f"""
+            select (repeat('     ', level-1) || ${child_index}) as name, 
+                ltrim(sys_connect_by_path(${child_index}, '.'), '.') as path
+            from {tableName}
+            start with ${parent_index} is null
+            connect by prior ${child_index} = ${parent_index}
+            order by path;
+        """
+        
+        df_path = utils.getDataFrame(session, query)
+        st.dataframe(df_path, use_container_width=True)
+    
 # show in another data format
 with tabFormat:
     sel = st.selectbox(
