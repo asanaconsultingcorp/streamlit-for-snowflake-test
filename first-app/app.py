@@ -11,9 +11,9 @@ import modules.utils as utils
 import auth
 
 st.set_page_config(layout="wide")
-st.title("Hierarchical Data Viewer")
-st.caption("Display your hierarchical data with charts and graphs.")
-auth.check_user_and_password()
+#st.title("Hierarchical Data Viewer")
+#st.caption("Display your hierarchical data with charts and graphs.")
+#auth.check_user_and_password()
 
 def getSessionId():
     if "session_id" not in st.session_state:
@@ -26,17 +26,16 @@ def loadFile(session_id, filename):
     return pd.read_csv(filename).convert_dtypes()
 
 with st.sidebar:
-    print("1")
     session = (
         utils.getLocalSession()
         if utils.isLocal()
         else utils.getRemoteSession()
     )
-    print("2")
+    
     tableName = None
     if session is not None:
         tableName = st.text_input("Full table/view name")
-    print("3")
+    
     hasTable = session is not None and tableName is not None and len(tableName) > 0
     if hasTable:
         df_orig = utils.getDataFrame(session, f"select * from {tableName}")
@@ -65,7 +64,6 @@ with tabSource:
     st.dataframe(df_orig, use_container_width=True)
 
 with tabPath:
-    print(hasTable)
     if hasTable:
         child_index = cols.index(child) + 1
         parent_index = cols.index(parent) + 1
