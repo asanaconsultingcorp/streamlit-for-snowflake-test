@@ -25,6 +25,7 @@ def getSessionId():
 def loadFile(session_id, filename):
     return pd.read_csv(filename).convert_dtypes()
 
+
 with st.sidebar:
     session = (
         utils.getLocalSession()
